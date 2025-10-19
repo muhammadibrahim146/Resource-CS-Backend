@@ -1,5 +1,5 @@
-import { Post } from "../models/post.model.js";
-import cloudinary from "../config/cloudinary.js";
+import { Post } from "../model/post.model.js";
+import cloudinary from "../utilis/cloudinnary.js";
 import fs from "fs";
 
 

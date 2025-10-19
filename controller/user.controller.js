@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { User } from "../model/user.model.js";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
