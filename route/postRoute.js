@@ -5,7 +5,7 @@ import { upload } from "../middleware/multer.js";
 
 const postRoutes = express.Router();
 
-postRoutes.post("/create", authMiddleware, upload.single("image"), createPost);
+postRoutes.post("/create", authMiddleware,upload.single("image"), createPost);
 postRoutes.get("/", getAllPosts);
 postRoutes.post("/:postId/comment", authMiddleware, addComment);
 postRoutes.delete("/:postId", authMiddleware, deletePost);

@@ -32,11 +32,13 @@ export const registerUser = async (req, res) => {
     });
 
     // cookie set
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false, // change to true in production
-      sameSite: "lax",
-    });
+ res.cookie("token", token, {
+  httpOnly: true,
+  secure: false, // local ke liye false
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 👈 add this
+});
+
 
     res.status(201).json({
       message: "User registered successfully",
@@ -81,6 +83,7 @@ export const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
       },
+      token,
     });
   } catch (error) {
     console.error(error);

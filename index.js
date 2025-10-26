@@ -13,16 +13,16 @@ dotenv.config();
 // ✅ Connect MongoDB
 await connectDb();
 
-// ✅ Initialize app
+//  Initialize app
 const app = express();
 
-// ✅ Middlewares
+//  Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://resource-cs.netlify.app", // frontend ka link
+    origin: "http://localhost:5173", // frontend ka link
     credentials: true,
   })
 );
@@ -32,12 +32,12 @@ app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/events", eventRoutes);
 
-// ✅ Default route (for testing)
+//  Default route (for testing)
 app.get("/", (req, res) => {
-  res.send("✅ Resource-CS Backend is running successfully!");
+  res.send(" Resource-CS Backend is running successfully!");
 });
 
-// ✅ Start server
+//  Start server
 const PORT = process.env.PORT || 3000;
 app.listen(5000, () => {
   console.log(`🚀 Server is running on http://localhost:5000`);

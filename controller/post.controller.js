@@ -1,14 +1,17 @@
 import { Post } from "../model/post.model.js";
 import cloudinary from "../utilis/cloudinnary.js";
-import fs from "fs";
 
-
+// ------------------
 // Create Post
-
+// ------------------
 export const createPost = async (req, res) => {
   try {
-    const { title, description } = req.body;
-    const userId = req.user.id; // from auth middleware
+    const { caption } = req.body;
+    const userId = req.user.id;
+
+    if (!caption) {
+      return res.status(400).json({ message: "Caption is required" });
+    }
 
     if (!req.file) {
       return res.status(400).json({ message: "Image is required" });
@@ -16,16 +19,12 @@ export const createPost = async (req, res) => {
 
     // Upload image to Cloudinary
     const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "posts",
+      folder: "ResourceCS_Posts",
     });
-
-    // Delete image from local storage after upload
-    fs.unlinkSync(req.file.path);
 
     // Create post
     const post = new Post({
-      title,
-      desciption: description,
+      caption,
       user: userId,
       image: result.secure_url,
     });
@@ -37,14 +36,14 @@ export const createPost = async (req, res) => {
       post,
     });
   } catch (error) {
-    console.error("Error creating post:", error);
+    console.error("❌ Error creating post:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
-
+// ------------------
 // Get All Posts
-
+// ------------------
 export const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find()
@@ -53,12 +52,14 @@ export const getAllPosts = async (req, res) => {
 
     res.status(200).json(posts);
   } catch (error) {
+    console.error("❌ Error fetching posts:", error);
     res.status(500).json({ message: "Error fetching posts", error: error.message });
   }
 };
 
-
-// Get Single Post by ID
+// ------------------
+// Get Single Post
+// ------------------
 export const getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id).populate("user", "name email");
@@ -66,33 +67,38 @@ export const getPostById = async (req, res) => {
 
     res.status(200).json(post);
   } catch (error) {
+    console.error("❌ Error fetching post:", error);
     res.status(500).json({ message: "Error fetching post", error: error.message });
   }
 };
 
-
+// ------------------
 // Delete Post
-
+// ------------------
 export const deletePost = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id);
+    console.log("Deleting post ID:", req.params.id);
+    console.log("User trying to delete:", req.user);
+
+    const post = await Post.findById(req.params.postId);
+    console.log("Found post:", post);
+
     if (!post) return res.status(404).json({ message: "Post not found" });
 
-    // Optional: check if user owns the post
-    if (post.user.toString() !== req.user.id) {
-      return res.status(403).json({ message: "Not authorized" });
-    }
+   
 
-    await Post.findByIdAndDelete(req.params.id);
+    await Post.findByIdAndDelete(req.params.postId);
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Error deleting post", error: error.message });
   }
 };
 
 
-// Add Comment to Post
-
+// ------------------
+// Add Comment
+// ------------------
 export const addComment = async (req, res) => {
   try {
     const { text } = req.body;
@@ -112,8 +118,10 @@ export const addComment = async (req, res) => {
 
     res.status(200).json({ message: "Comment added", post });
   } catch (error) {
+    console.error("❌ Error adding comment:", error);
     res.status(500).json({ message: "Error adding comment", error: error.message });
   }
 };
+
 
 
